@@ -19,10 +19,10 @@ protected:
 private:
   void drawBorders (QPainter *painter, int x, int y);
   void drawPlayer (QPainter *painter);
-  void generateMaze ();
+  void newGame (int num_levels);
   int grid (int p);
-  GameMechanics *game_;
-  int maze_size_ = 15;
+  GameMechanics *game_ = nullptr;
+  int maze_size_ = 12;
 };
 
 #endif // MAZEBOARD_H

@@ -1,29 +1,25 @@
 #include "huntandkill.h"
 
-HuntAndKill::HuntAndKill () {
-  newArray (maze_map_, 20, 10);
-  resetArray (maze_map_, square::kUnvalid);
-  generate ();
-}
-
-HuntAndKill::HuntAndKill (int maze_width, int maze_height) {
-  newArray (maze_map_, maze_width, maze_height);
+HuntAndKill::HuntAndKill (Size maze_size) {
+  newArray (maze_map_, maze_size.x, maze_size.y);
   resetArray (maze_map_, square::kUnvalid);
   generate ();
 }
 
 HuntAndKill::~HuntAndKill () {
   deleteArray (maze_map_);
+  deleteArray (distance_from_player_);
 }
 
 void HuntAndKill::generate () {
-  Point start {2, 2};
+  Point start = Point {rand () % maze_map_.width,
+                rand () % maze_map_.height};
   do {
     createPath (start);
   } while (huntPoint (start));
 }
 
-Point HuntAndKill::createPath (Point current_point) {
+void HuntAndKill::createPath(Point current_point) {
   while (true) {
     switch (randDirection (current_point)) {
       case direction::kUp:
@@ -47,7 +43,7 @@ Point HuntAndKill::createPath (Point current_point) {
         current_point += Point {-1, 0};
         break;
       default:
-        return current_point;
+        return;
     }
   }
 }

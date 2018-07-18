@@ -1,7 +1,7 @@
 #include "mazeboard.h"
 
 MazeBoard::MazeBoard (QWidget *parent) : QFrame (parent) {
-  game_ = new GameMechanics ();
+  game_ = new GameMechanics (10, Size {13, 13}, 1); // ma pobierać z widgetów
   setFocusPolicy (Qt::StrongFocus);
   setFrameStyle (QFrame::Panel | QFrame::Sunken);
   setLineWidth (5);
@@ -12,10 +12,10 @@ MazeBoard::~MazeBoard () {
     delete game_;
 }
 
-void MazeBoard::generateMaze () {
+void MazeBoard::newGame (int num_levels) {
   if (game_ != nullptr)
     delete game_;
-  game_ = new GameMechanics ();
+  game_ = new GameMechanics (num_levels, Size {13, 13}, 1); // ma pobierać z widgetów
 }
 
 void MazeBoard::keyPressEvent (QKeyEvent *event) {
@@ -35,26 +35,39 @@ void MazeBoard::keyPressEvent (QKeyEvent *event) {
     case Qt::Key_E:
       game_->tryEnter ();
       break;
-    case Qt::Key_Up:
-      game_->nextLevel ();
+    case Qt::Key_QuoteLeft:
+      game_->toogleGodMode ();
       break;
-    case Qt::Key_Down:
-      game_->previousLevel ();
-      break;
-    case Qt::Key_G:
-      generateMaze ();
-      update ();
-      break;
-    case Qt::Key_Q:
+    case Qt::Key_Escape:
       exit (0);
-
 //    default:
-//      qDebug() << "klawisz bez funkcji, MazeBoards";
+//      qDebug() << event;
+  }
+  if (game_->isGod ()) {
+    switch (event->key ()) {
+      case Qt::Key_Right:
+        game_->nextLevel ();
+        break;
+      case Qt::Key_Left:
+        game_->previousLevel ();
+        break;
+      case Qt::Key_O:
+        game_->jumpToStart ();
+        break;
+      case Qt::Key_P:
+        game_->jumpToEnd ();
+        break;
+      case Qt::Key_G:
+        newGame (10);
+        update ();
+        break;
+    }
   }
   update ();
 }
 
 inline int MazeBoard::grid (int p) {
+  p += game_->numLevels () - game_->currentLevel ();
   return (p+1) * maze_size_ * 2 + p * 2 + 30;
 }
 
@@ -62,13 +75,17 @@ void MazeBoard::paintEvent(QPaintEvent *event) {
   QFrame::paintEvent (event);
   QPainter painter (this);
 
-  for (int x = -1; x <= game_->mazeWidth (); ++x)
-    for (int y = -1; y <= game_->mazeHeight (); ++y){
+  for (int x = 0; x < game_->mazeWidth (); ++x)
+    for (int y = 0; y < game_->mazeHeight (); ++y){
       drawBorders (&painter, x, y);
-      //painter.drawText (grid (x) - 2, grid (y) + 5, "8");
+      painter.drawText (grid (x) - 2, grid (y) + 5,
+                        QString::number (game_->distanceFromPlayer (x, y)));
     }
   drawPlayer(&painter);
-  painter.drawText (grid (game_->endX ()), grid (game_->endY ()), "X");
+  painter.setPen (Qt::green);
+  painter.drawRect (grid (game_->startX ()) - 10, grid (game_->startY ()) - 10, 20, 20);
+  painter.setPen (Qt::red);
+  painter.drawRect (grid (game_->endX ()) - 10, grid (game_->endY ()) - 10, 20, 20);
 }
 
 void MazeBoard::drawBorders (QPainter *painter, int x, int y) {
@@ -92,9 +109,9 @@ void MazeBoard::drawPlayer (QPainter *painter) {
   painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
                               grid (game_->playerPositionY ())),
                       5, 5);
-  painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
-                              grid (game_->playerPositionY ())),
-                      8, 8);
+//  painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
+//                              grid (game_->playerPositionY ())),
+//                      8, 8);
   painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
                               grid (game_->playerPositionY ())),
                       11, 11);

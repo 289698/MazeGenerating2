@@ -2,20 +2,25 @@
 
 MazeWindow::MazeWindow () {
   maze_board_ = new MazeBoard (this);
-  //maze_board_->setLineWidth(2);
+  frame1_ = new QFrame;
+  frame1_->setFrameStyle (QFrame::Panel | QFrame::Sunken);
+  frame1_->setLineWidth (5);
+  frame2_ = new QFrame;
+  frame2_->setFrameStyle (QFrame::Panel | QFrame::Sunken);
+  frame2_->setLineWidth (5);
+
   QGridLayout *layout = new QGridLayout;
-  layout->addWidget (maze_board_, 0, 0);
-//  QPushButton *button = new QPushButton ("PUSH ME");
-//  layout->addWidget (button, 0, 0);
-//  QPushButton *button2 = new QPushButton ("PUSH ME 2");
-//  layout->addWidget (button2, 1, 0);
-//  QFrame *frame1 = new QFrame;
-//  frame1->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-//  layout->addWidget(frame1, 1, 0);
+  layout->addWidget (frame1_, 0, 0);
+  layout->addWidget (maze_board_, 0, 1, -1, 4);
+  layout->addWidget (frame2_, 0, 6);
   setLayout (layout);
-  resize (800, 800);
+  //resize (800, 800);
+  showMaximized ();
+  //showFullScreen ();
 }
 
 MazeWindow::~MazeWindow () {
-
+  delete maze_board_;
+  delete frame1_;
+  delete frame2_;
 }

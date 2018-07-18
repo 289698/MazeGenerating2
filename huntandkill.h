@@ -8,15 +8,14 @@
 
 class HuntAndKill : public MazeMap {
 public:
-  HuntAndKill ();
-  HuntAndKill (int maze_width, int maze_height);
+  HuntAndKill (Size maze_size);
   ~HuntAndKill ();
-  void generate ();
 
 private:
+  void generate ();
   bool huntPoint (Point &point);
-  Point createPath (Point current_point);
-  int randDirection(const Point &position);
+  void createPath (Point current_point);
+  int randDirection (const Point &position);
 };
 
 #endif // HUNTANDKILL_H

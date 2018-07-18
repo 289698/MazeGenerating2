@@ -16,6 +16,9 @@ public:
 
 private:
   MazeBoard *maze_board_;
+
+  QFrame *frame1_;
+  QFrame *frame2_;
 };
 
 #endif // MAZEWINDOW_H
