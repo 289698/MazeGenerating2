@@ -57,6 +57,9 @@ void MazeBoard::keyPressEvent (QKeyEvent *event) {
       case Qt::Key_P:
         game_->jumpToEnd ();
         break;
+      case Qt::Key_L:
+        is_distance_enabled_ = !is_distance_enabled_;
+        break;
       case Qt::Key_G:
         newGame (10);
         update ();
@@ -75,17 +78,26 @@ void MazeBoard::paintEvent(QPaintEvent *event) {
   QFrame::paintEvent (event);
   QPainter painter (this);
 
-  for (int x = 0; x < game_->mazeWidth (); ++x)
-    for (int y = 0; y < game_->mazeHeight (); ++y){
+  for (int x = -1; x <= game_->mazeWidth (); ++ x)
+    for (int y = -1; y <= game_->mazeHeight (); ++ y)
       drawBorders (&painter, x, y);
-      painter.drawText (grid (x) - 2, grid (y) + 5,
-                        QString::number (game_->distanceFromPlayer (x, y)));
-    }
+
+  painter.setPen (Qt::blue);
   drawPlayer(&painter);
+
   painter.setPen (Qt::green);
   painter.drawRect (grid (game_->startX ()) - 10, grid (game_->startY ()) - 10, 20, 20);
+
   painter.setPen (Qt::red);
   painter.drawRect (grid (game_->endX ()) - 10, grid (game_->endY ()) - 10, 20, 20);
+
+  if (is_distance_enabled_) {
+    painter.setPen (Qt::gray);
+    for (int x = 0; x < game_->mazeWidth (); ++ x)
+      for (int y = 0; y < game_->mazeWidth (); ++ y)
+        painter.drawText (grid (x) - 8, grid (y) + 5,
+                          QString::number (game_->distanceFromPlayer (x, y)));
+  }
 }
 
 void MazeBoard::drawBorders (QPainter *painter, int x, int y) {
@@ -109,9 +121,9 @@ void MazeBoard::drawPlayer (QPainter *painter) {
   painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
                               grid (game_->playerPositionY ())),
                       5, 5);
-//  painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
-//                              grid (game_->playerPositionY ())),
-//                      8, 8);
+  painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
+                              grid (game_->playerPositionY ())),
+                      8, 8);
   painter->drawEllipse(QPoint (grid (game_->playerPositionX ()),
                               grid (game_->playerPositionY ())),
                       11, 11);

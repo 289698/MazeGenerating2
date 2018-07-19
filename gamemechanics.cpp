@@ -5,19 +5,17 @@ GameMechanics::GameMechanics (int num_levels, Size first_level, int maze_increme
   num_levels_ = num_levels;
   mazes_ = new MazeMap *[num_levels_];
 
-  mazes_ [0] = new HuntAndKill (first_level);
-  mazes_ [0]->setStart (Point {6, 6});
-  mazes_ [0]->setEnd ();
-  for (int i = 1; i < num_levels_; ++ i){
-    mazes_ [i] = new HuntAndKill (first_level += Size {maze_increment * 2, maze_increment * 2});
-    mazes_ [i]->setStart (mazes_ [i - 1]->endPoint () + Point {maze_increment, maze_increment});
-    mazes_ [i]->setEnd ();
-  }
+  mazes_ [0] = new HuntAndKill (first_level, Point {6, 6}); // popraw
+  for (int i = 1; i < num_levels_; ++ i)
+    mazes_ [i] = new HuntAndKill (first_level += Size {maze_increment * 2, maze_increment * 2},
+                                  mazes_ [i - 1]->endPoint () + Point {maze_increment, maze_increment});
 
   player_position_ = mazes_ [0]->startPoint ();
 }
 
 GameMechanics::~GameMechanics () {
+  for (int i = 0; i < num_levels_; ++ i)
+    delete mazes_ [i];
   delete [] mazes_;
 }
 

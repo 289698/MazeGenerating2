@@ -9,6 +9,7 @@
 class HuntAndKill : public MazeMap {
 public:
   HuntAndKill (Size maze_size);
+  HuntAndKill (Size maze_size, Point start);
   ~HuntAndKill ();
 
 private:

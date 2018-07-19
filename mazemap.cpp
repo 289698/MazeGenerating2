@@ -1,5 +1,9 @@
 #include "mazemap.h"
 
+MazeMap::~MazeMap () {
+
+}
+
 int MazeMap::at (int x, int y) {
   if (maze_map_.array == nullptr
       || x >= maze_map_.width || x < 0
@@ -14,15 +18,17 @@ void MazeMap::resetDistance (const Point &position) {
   floodFill (0, position.x, position.y);
 }
 
-void MazeMap::setEnd () {
-  int distance = 0; // niech zależy od h i w
+int MazeMap::setEnd () {
+  int distance = 0;
   resetDistance (start_);
   for (int x = 0; x < maze_map_.width; ++ x)
     for (int y = 0; y < maze_map_.height; ++ y)
-      if (distance_from_player_.array [x] [y] > distance){
+      if (distance_from_player_.array [x] [y] > distance) {
         end_ = Point {x, y};
         distance = distance_from_player_.array [x] [y];
       }
+  deleteArray (distance_from_player_);
+  return distance;
 }
 
 void MazeMap::floodFill (int value, int x, int y) {

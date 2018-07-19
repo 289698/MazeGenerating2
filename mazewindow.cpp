@@ -14,8 +14,8 @@ MazeWindow::MazeWindow () {
   layout->addWidget (maze_board_, 0, 1, -1, 4);
   layout->addWidget (frame2_, 0, 6);
   setLayout (layout);
-  //resize (800, 800);
-  showMaximized ();
+  resize (800, 800);
+//  showMaximized ();
   //showFullScreen ();
 }
 

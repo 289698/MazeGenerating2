@@ -23,6 +23,7 @@ private:
   int grid (int p);
   GameMechanics *game_ = nullptr;
   int maze_size_ = 12;
+  bool is_distance_enabled_ = false; // nie zoptymalizowane, dla każdego pola tworzy od nowa całą tablicę
 };
 
 #endif // MAZEBOARD_H

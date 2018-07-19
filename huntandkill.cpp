@@ -6,6 +6,17 @@ HuntAndKill::HuntAndKill (Size maze_size) {
   generate ();
 }
 
+HuntAndKill::HuntAndKill (Size maze_size, Point start) {
+  newArray (maze_map_, maze_size.x, maze_size.y);
+  resetArray (maze_map_, square::kUnvalid);
+  generate ();
+  start_ = start;
+  while (setEnd () < (maze_map_.width + maze_map_.height - 20) * 3 + 50) {
+    resetArray (maze_map_, square::kUnvalid);
+    generate ();
+  }
+}
+
 HuntAndKill::~HuntAndKill () {
   deleteArray (maze_map_);
   deleteArray (distance_from_player_);
