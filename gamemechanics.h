@@ -10,18 +10,18 @@ public:
   explicit GameMechanics (int num_levels, Size first_level, int maze_increment, QObject *parent = 0);
   ~GameMechanics ();
 
-  inline int at (int x, int y) { return mazes_ [level_index_]->at(x, y); }
-  inline int mazeWidth () { return mazes_ [level_index_]->mazeWidth (); }
-  inline int mazeHeight () { return mazes_ [level_index_]->mazeHeight (); }
-  inline int playerPositionX () { return player_position_.x; }
-  inline int playerPositionY () { return player_position_.y; }
-  inline int numLevels () { return num_levels_; }
-  inline int currentLevel () { return level_index_; }
-  inline int startX () { return mazes_ [level_index_]->startX (); }
-  inline int startY () { return mazes_ [level_index_]->startY (); }
-  inline int endX () { return mazes_ [level_index_]->endX (); }
-  inline int endY () { return mazes_ [level_index_]->endY (); }
-  inline bool isGod () { return god_mode_; }
+  inline int at (int x, int y) const { return mazes_ [level_index_]->at(x, y); }
+  inline int mazeWidth () const { return mazes_ [level_index_]->mazeWidth (); }
+  inline int mazeHeight () const { return mazes_ [level_index_]->mazeHeight (); }
+  inline int playerPositionX () const { return player_position_.x; }
+  inline int playerPositionY () const { return player_position_.y; }
+  inline int numLevels () const { return num_levels_; }
+  inline int currentLevel () const { return level_index_; }
+  inline int startX () const { return mazes_ [level_index_]->startX (); }
+  inline int startY () const { return mazes_ [level_index_]->startY (); }
+  inline int endX () const { return mazes_ [level_index_]->endX (); }
+  inline int endY () const { return mazes_ [level_index_]->endY (); }
+  inline bool isGod () const { return god_mode_; }
   inline void toogleGodMode () { god_mode_ = !god_mode_; }
   inline void nextLevel () { if (level_index_ < num_levels_ - 1) ++ level_index_; }
   inline void previousLevel () { if (level_index_ > 0) -- level_index_; }

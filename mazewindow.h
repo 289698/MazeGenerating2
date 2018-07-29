@@ -2,9 +2,17 @@
 #define MAZEWINDOW_H
 
 #include <QFrame>
-#include <QWidget>
+#include <QLabel>
 #include <QPushButton>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QLCDNumber>
+#include <QSlider>
+
 #include <QGridLayout>
+#include <QWidget>
+#include <QString>
 #include "mazeboard.h"
 
 class MazeWindow : public QWidget {
@@ -12,13 +20,17 @@ class MazeWindow : public QWidget {
 
 public:
   MazeWindow ();
-  ~MazeWindow ();
+
+protected:
+  void keyPressEvent (QKeyEvent *event);
 
 private:
-  MazeBoard *maze_board_;
+  void updateLabels ();
+  QLabel *createLabel (QLabel *label, const QString &text);
 
-  QFrame *frame1_;
-  QFrame *frame2_;
+  MazeBoard *maze_board_;
+  QFont font_;
+  QLabel *level_text_, *width_text_, *height_text_, *position_text_, *time_text_, *steps_text_;
 };
 
 #endif // MAZEWINDOW_H

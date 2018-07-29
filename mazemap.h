@@ -64,16 +64,16 @@ struct IntArray {
 class MazeMap {
 public:  
   virtual ~MazeMap ();
-  inline int distanceFromPlayer (int x, int y)
+  inline int distanceFromPlayer (int x, int y) const
   { return distance_from_player_.array [x] [y]; }
-  inline int mazeWidth () { return maze_map_.width; }
-  inline int mazeHeight () { return maze_map_.height; }
-  inline int startX () { return start_.x; }
-  inline int startY () { return start_.y; }
-  inline Point startPoint () { return start_; }
-  inline int endX () { return end_.x; }
-  inline int endY () { return end_.y; }
-  inline Point endPoint () { return end_; }
+  inline int mazeWidth () const { return maze_map_.width; }
+  inline int mazeHeight () const { return maze_map_.height; }
+  inline int startX () const { return start_.x; }
+  inline int startY () const { return start_.y; }
+  inline Point startPoint () const { return start_; }
+  inline int endX () const { return end_.x; }
+  inline int endY () const { return end_.y; }
+  inline Point endPoint () const { return end_; }
   inline void setStart (Point start) { start_ = start; }
   int setEnd ();
 
