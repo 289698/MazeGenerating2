@@ -37,7 +37,7 @@ private:
   Point player_position_;
   int num_levels_;
   int level_index_ = 0;
-  bool god_mode_ = 0;
+  bool god_mode_ = true;
 };
 
 #endif // GAMEMECHANICS_H

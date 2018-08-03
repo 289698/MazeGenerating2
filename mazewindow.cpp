@@ -36,7 +36,7 @@ MazeWindow::MazeWindow () {
   maze_board_ = new MazeBoard (this);
   maze_board_->setFrameStyle (QFrame::Panel | QFrame::Sunken);
   maze_board_->setLineWidth (7);
-  maze_board_->setStyleSheet ("background-color: #eeaa11");
+  maze_board_->setStyleSheet ("background-color: #50dd31");
   layout->addWidget (maze_board_, 0, 1, -1, 3);
 
   layout->addWidget (createLabel (new QLabel, "CHARACTER"), 0, 4, 1, 1, Qt::AlignHCenter);
@@ -69,7 +69,6 @@ QLabel *MazeWindow::createLabel (QLabel *label, const QString &text) {
 }
 
 void MazeWindow::updateLabels () {
-  qDebug () << "UPDATE!";
   level_text_->setText ("LEVEL: " + QString::number (maze_board_->currentLevel () + 1)
                         + "/" + QString::number (maze_board_->numLevels ()));
   width_text_->setText ("MAZE WIDTH: " + QString::number (maze_board_->mazeWidth ()));

@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QTimer>
 #include <gamemechanics.h>
 
 class MazeBoard : public QFrame {
@@ -26,22 +27,20 @@ protected:
 
 private:
   void newGame (int num_levels);
-  void drawBorders (QPainter *painter);
-  void adjustElementsSize ();
-  void newQPolygonFs ();
-  void deleteQPolygonFs ();
+  void reloadTextures ();
 
+  QTimer *timer = nullptr;
   GameMechanics *game_ = nullptr;
-  qreal maze_size_ = 0;
-  int pix_x_ = 0, pix_y_ = 0;
+  int texture_resolution_ = 64, maze_size_, margin_x_, margin_y_;
+  bool is_antialiasing_= false;
 
-  QPolygonF *wall_main_corner_ = nullptr, *wall_shadow_corner_ = nullptr,
-  *wall_main_vertical_ = nullptr, *wall_shadow_vertical_ = nullptr,
-  *wall_main_horizontal_ = nullptr, *wall_shadow_horizontal_ = nullptr,
-  *wall_main_empty_ = nullptr, *wall_shadow_empty_ = nullptr;
-
-  QImage player_icon_;
+  QImage /**maze_ = nullptr, */*maze_square_ = nullptr, *player_icon_ = nullptr;
   QTransform player_rotation_;
+
+  double angle_ = 0;
+
+private slots:
+  void increaseAngle () { angle_ = (angle_ + 0.2); update (); }
 };
 
 #endif // MAZEBOARD_H
