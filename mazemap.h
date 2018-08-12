@@ -5,22 +5,16 @@
 
 namespace square {
   static const int
-  kEmpty         = 0,  // 0000
-  kUp            = 1,  // 0001
-  kRight         = 2,  // 0010
-  //kUpRight       = 3,  // 0011
-  kDown          = 4,  // 0100
-  //kUpDown        = 5,  // 0101
-  //kRightDown     = 6,  // 0110
-  //kUpRightDown   = 7,  // 0111
-  kLeft          = 8,  // 1000
-  //kUpLeft        = 9,  // 1001
-  //kRightLeft     = 10, // 1010
-  //kUpRightLeft   = 11, // 1011
-  //kDownLeft      = 12, // 1100
-  //kUpDownLeft    = 13, // 1101
-  //kRightDownLeft = 14, // 1110
-  kUnvalid       = 15; // 1111
+  kEmpty      = 0b0000,
+  kUp         = 0b0001,
+  kRight      = 0b0010,
+  kDown       = 0b0100,
+  kLeft       = 0b1000,
+  kSurrounded = 0b1111,
+
+  kOutside    = 0b00010000,
+  kSolid      = 0b00100000,
+  kWater      = 0b01000000;
 } namespace direction = square;
 
 struct Point {
@@ -47,6 +41,9 @@ struct Point {
     this->y = rhs.y;
     return *this;
   }
+  inline Point operator / (const int &rhs) {
+    return Point {this->x / rhs, this->y / rhs};
+  }
   inline bool operator == (const Point &rhs) {
     if (this->x == rhs.x && this->y == rhs.y)
       return 1;
@@ -66,18 +63,21 @@ public:
   virtual ~MazeMap ();
   inline int distanceFromPlayer (int x, int y) const
   { return distance_from_player_.array [x] [y]; }
+  inline Size mazeSize () const { return Size {maze_map_.width, maze_map_.height}; }
   inline int mazeWidth () const { return maze_map_.width; }
   inline int mazeHeight () const { return maze_map_.height; }
+  inline Point startPoint () const { return start_; }
   inline int startX () const { return start_.x; }
   inline int startY () const { return start_.y; }
-  inline Point startPoint () const { return start_; }
+  inline Point endPoint () const { return end_; }
   inline int endX () const { return end_.x; }
   inline int endY () const { return end_.y; }
-  inline Point endPoint () const { return end_; }
-  inline void setStart (Point start) { start_ = start; }
   int setEnd ();
 
   int at (int x, int y);
+  int at (Point position) { return at (position.x, position.y); }
+  int backgroundAt (int x, int y);
+  int backgroundAt (Point position) { return backgroundAt (position.x, position.y); }
   void resetDistance (const Point &position);
 
 protected:

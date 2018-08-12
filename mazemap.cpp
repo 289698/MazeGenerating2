@@ -8,9 +8,34 @@ int MazeMap::at (int x, int y) {
   if (maze_map_.array == nullptr
       || x >= maze_map_.width || x < 0
       || y >= maze_map_.height || y < 0)
-    return square::kUnvalid;
-  return maze_map_.array [x] [y];
+    return square::kEmpty;
+  return maze_map_.array [x] [y] & square::kSurrounded;
 }
+
+int MazeMap::backgroundAt (int x, int y) {
+  if (maze_map_.array == nullptr
+      || x >= maze_map_.width || x < 0
+      || y >= maze_map_.height || y < 0)
+    return 1;
+  switch (maze_map_.array [x] [y] & (square::kOutside | square::kWater)) {
+    case square::kEmpty:
+      return 0;
+    case square::kOutside:
+      return 1;
+    case square::kWater:
+      return 2;
+    case (square::kOutside | square::kWater):
+      return 3;
+    default:
+      return 0;
+  }
+}
+
+//int MazeMap::backgroundAt (int x, int y) {
+//  if (maza_map.array ==  nullptr
+//      || x >= maze_map_.width || x < 0
+//      || y >= maze_map_.height || y < 0)
+//}
 
 void MazeMap::resetDistance (const Point &position) {
   newArray (distance_from_player_, maze_map_.width, maze_map_.height);
@@ -32,18 +57,18 @@ int MazeMap::setEnd () {
 }
 
 void MazeMap::floodFill (int value, int x, int y) {
-    distance_from_player_.array [x] [y] = value;
+  distance_from_player_.array [x] [y] = value;
   if ( !(maze_map_.array [x] [y] & direction::kUp)
-      && distance_from_player_.array [x] [y - 1] == -1)
+       && distance_from_player_.array [x] [y - 1] == -1)
     floodFill (value + 1, x, y - 1);
   if ( !(maze_map_.array [x] [y] & direction::kRight)
-      && distance_from_player_.array [x + 1] [y] == -1)
+       && distance_from_player_.array [x + 1] [y] == -1)
     floodFill (value + 1, x + 1, y);
   if ( !(maze_map_.array [x] [y] & direction::kDown)
-      && distance_from_player_.array [x] [y + 1] == -1)
+       && distance_from_player_.array [x] [y + 1] == -1)
     floodFill (value + 1, x, y + 1);
   if ( !(maze_map_.array [x] [y] & direction::kLeft)
-      && distance_from_player_.array [x - 1] [y] == -1)
+       && distance_from_player_.array [x - 1] [y] == -1)
     floodFill (value + 1, x - 1, y);
   return;
 }

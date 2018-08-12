@@ -24,3 +24,7 @@ HEADERS  += mazewindow.h \
     mazemap.h \
     mazeboard.h \
     gamemechanics.h
+
+RESOURCES += textures.qrc
+
+DISTFILES +=

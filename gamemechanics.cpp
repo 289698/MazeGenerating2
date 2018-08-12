@@ -5,7 +5,7 @@ GameMechanics::GameMechanics (int num_levels, Size first_level, int maze_increme
   num_levels_ = num_levels;
   mazes_ = new MazeMap *[num_levels_];
 
-  mazes_ [0] = new HuntAndKill (first_level, Point {1, 1}); // popraw
+  mazes_ [0] = new HuntAndKill (first_level, first_level / 2);
   for (int i = 1; i < num_levels_; ++ i)
     mazes_ [i] = new HuntAndKill (first_level += Size {maze_increment * 2, maze_increment * 2},
                                   mazes_ [i - 1]->endPoint () + Point {maze_increment, maze_increment});
@@ -24,9 +24,9 @@ int GameMechanics::distanceFromPlayer (int x, int y) {
   return mazes_ [level_index_]->distanceFromPlayer (x, y);
 }
 
-void GameMechanics::tryMove (int direction) {
+bool GameMechanics::tryMove (int direction) {
   if (mazes_ [level_index_]->at (player_position_.x, player_position_.y) & direction)
-    return;
+    return 0;
   switch (direction) {
     case direction::kUp:
       -- player_position_.y;
@@ -41,21 +41,23 @@ void GameMechanics::tryMove (int direction) {
       -- player_position_.x;
       break;
   }
+  return 1;
 }
 
-void GameMechanics::tryEnter () {
+bool GameMechanics::tryEnter () {
   if (player_position_ == mazes_ [level_index_]->endPoint () && level_index_ < num_levels_ - 1) {
     ++ level_index_;
     player_position_ = mazes_ [level_index_]->startPoint ();
-    return;
+    return 1;
   }
   if (player_position_ == mazes_ [level_index_]->startPoint () && level_index_ > 0) {
     -- level_index_;
     player_position_ = mazes_ [level_index_]->endPoint ();
-    return;
+    return 1;
   }
   if (player_position_ == mazes_ [num_levels_ - 1]->endPoint ()) {
     // finish method
     exit (0);
   }
+  return 0;
 }

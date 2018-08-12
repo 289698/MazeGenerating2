@@ -3,10 +3,11 @@
 MazeWindow::MazeWindow () {
   QGridLayout *layout = new QGridLayout;
 
-  font_.setFamily ("Snap ITC");
-  font_.setPixelSize (20);
+  font_.setFamily ("Digital-7");
+//  font_.setFamily ("Snap ITC");
+  font_.setPixelSize (40);
   font_.setStyleHint (QFont::OldEnglish);
-  font_.setWeight (QFont::Thin);
+  font_.setWeight (QFont::Bold);
 
   layout->addWidget (createLabel (new QLabel, "YOU ARE HERE"), 0, 0, 1, 1, Qt::AlignHCenter);
 
@@ -35,30 +36,43 @@ MazeWindow::MazeWindow () {
 
   maze_board_ = new MazeBoard (this);
   maze_board_->setFrameStyle (QFrame::Panel | QFrame::Sunken);
-  maze_board_->setLineWidth (7);
-  maze_board_->setStyleSheet ("background-color: #50dd31");
-  layout->addWidget (maze_board_, 0, 1, -1, 3);
+  maze_board_->setLineWidth (10);
+  maze_board_->setFocus ();
+  maze_board_->setStyleSheet ("background-color: #c71");
+  maze_board_->setFixedSize (800, 800);
+  layout->addWidget (maze_board_, 0, 1, -1, 1, Qt::AlignCenter);
 
-  layout->addWidget (createLabel (new QLabel, "CHARACTER"), 0, 4, 1, 1, Qt::AlignHCenter);
+  layout->addWidget (createLabel (new QLabel, "CHARACTER"), 0, 2, 1, 1, Qt::AlignHCenter);
 
   QFrame *temp_frame_3 = new QFrame;
   temp_frame_3->setFrameStyle (QFrame::Panel | QFrame::Sunken);
   temp_frame_3->setLineWidth (5);
-  layout->addWidget (temp_frame_3, 1, 4, 1, 1);
-
+  layout->addWidget (temp_frame_3, 1, 2, 1, 1);
 
 //  layout->setSpacing (20);
   setLayout (layout);
-  setStyleSheet ("background-color: #cc7711");
+  setStyleSheet ("background-color: #c71");
 //  resize (800, 800);
   showMaximized ();
-  //    showFullScreen ();
+//  showFullScreen ();
   updateLabels ();
+  timer_ = new QTimer;
+  connect (timer_, SIGNAL (timeout ()), this, SLOT(tick ()));
+  timer_->start (100);
+}
+
+void MazeWindow::tick () {
+  game_time_ += 100;
+  updateLabels ();
+}
+
+MazeWindow::~MazeWindow () {
+  if (timer_ != nullptr)
+    delete timer_;
 }
 
 void MazeWindow::keyPressEvent (QKeyEvent *event) {
   maze_board_->handleKeyEvent (event);
-  updateLabels ();
 }
 
 QLabel *MazeWindow::createLabel (QLabel *label, const QString &text) {
@@ -69,12 +83,12 @@ QLabel *MazeWindow::createLabel (QLabel *label, const QString &text) {
 }
 
 void MazeWindow::updateLabels () {
-  level_text_->setText ("LEVEL: " + QString::number (maze_board_->currentLevel () + 1)
-                        + "/" + QString::number (maze_board_->numLevels ()));
-  width_text_->setText ("MAZE WIDTH: " + QString::number (maze_board_->mazeWidth ()));
-  height_text_->setText ("MAZE HEIGHT: " + QString::number (maze_board_->mazeHeight ()));
-  position_text_->setText ("POSITION: " + QString::number (maze_board_->playerPositionX ())
-                           + " x " + QString::number (maze_board_->playerPositionY ()));
-//  time_text_->setText ();
-//  steps_text_->setText ();
+  level_text_->setText (QString ("LEVEL: %1 / %2").arg (maze_board_->currentLevel () + 1)
+                        .arg(maze_board_->numLevels ()));
+  width_text_->setText (QString ("MAZE WIDTH: %1").arg (maze_board_->mazeWidth ()));
+  height_text_->setText (QString ("MAZE HEIGHT: %1").arg (maze_board_->mazeHeight ()));
+  position_text_->setText (QString ("POSITION: %1 x %2").arg (maze_board_->playerPositionX ())
+                           .arg (maze_board_->playerPositionY ()));
+  time_text_->setText (QString ("TIME: %1 s").arg (game_time_ / 1000.0, 2, 'f', 1));
+  steps_text_->setText (QString ("STEPS: %1").arg (maze_board_->playerSteps ()));
 }

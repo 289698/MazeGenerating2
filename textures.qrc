@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>player_characters/tomato.png</file>
+        <file>player_characters/tomatoHD.png</file>
+        <file>player_characters/Mummy.png</file>
+        <file>mazes/shadow_temp.png</file>
+    </qresource>
+</RCC>
