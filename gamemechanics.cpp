@@ -5,10 +5,10 @@ GameMechanics::GameMechanics (int num_levels, Size first_level, int maze_increme
   num_levels_ = num_levels;
   mazes_ = new MazeMap *[num_levels_];
 
-  mazes_ [0] = new HuntAndKill (first_level, first_level / 2);
+  mazes_ [0] = new HuntAndKill (first_level, first_level / 2, 1);
   for (int i = 1; i < num_levels_; ++ i)
     mazes_ [i] = new HuntAndKill (first_level += Size {maze_increment * 2, maze_increment * 2},
-                                  mazes_ [i - 1]->endPoint () + Point {maze_increment, maze_increment});
+                                  mazes_ [i - 1]->endPoint () + Point {maze_increment, maze_increment}, 1);
 
   player_position_ = mazes_ [0]->startPoint ();
 }

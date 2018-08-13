@@ -14,7 +14,8 @@ namespace square {
 
   kOutside    = 0b00010000,
   kSolid      = 0b00100000,
-  kWater      = 0b01000000;
+  kWater      = 0b01000000,
+  kVisited    = 0b10000000;
 } namespace direction = square;
 
 struct Point {

@@ -5,6 +5,7 @@
 
 #include <QGridLayout>
 #include "mazeboard.h"
+#include "levelbar.h"
 
 class MazeWindow : public QWidget {
   Q_OBJECT
@@ -20,10 +21,10 @@ private:
   void updateLabels ();
   QLabel *createLabel (QLabel *label, const QString &text);
 
-  MazeBoard *maze_board_;
-  QFont font_;
-  QTimer *timer_;
-  QLabel *level_text_, *width_text_, *height_text_, *position_text_, *time_text_, *steps_text_;
+  MazeBoard *maze_board_ = nullptr;
+  LevelBar *level_bar_ = nullptr;
+  QFont *font_ = nullptr;
+  QTimer *timer_ = nullptr;
   int game_time_ = 0;
 
 private slots:

@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     huntandkill.cpp \
     mazemap.cpp \
     mazeboard.cpp \
-    gamemechanics.cpp
+    gamemechanics.cpp \
+    levelbar.cpp
 
 HEADERS  += mazewindow.h \
     huntandkill.h \
     mazemap.h \
     mazeboard.h \
-    gamemechanics.h
+    gamemechanics.h \
+    levelbar.h
 
 RESOURCES += textures.qrc
 

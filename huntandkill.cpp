@@ -6,24 +6,26 @@ HuntAndKill::HuntAndKill (Size maze_size) {
   generate ();
 }
 
-HuntAndKill::HuntAndKill (Size maze_size, Point start) {
+HuntAndKill::HuntAndKill (Size maze_size, Point start, bool frame_flag) {
   newArray (maze_map_, maze_size.x, maze_size.y);
   start_ = start;
   do {
     resetArray (maze_map_, square::kSurrounded);
-    for (int x = 1; x < maze_map_.width - 1; ++ x) {
-      maze_map_.array [x] [maze_map_.height - 1] = square::kUp + square::kOutside;
-      maze_map_.array [x] [0] = square::kDown + square::kOutside;
+    if (frame_flag) {
+      for (int x = 1; x < maze_map_.width - 1; ++ x) {
+        maze_map_.array [x] [maze_map_.height - 1] = square::kUp + square::kOutside;
+        maze_map_.array [x] [0] = square::kDown + square::kOutside;
+      }
+      for (int y = 1; y < maze_map_.height - 1; ++ y) {
+        maze_map_.array [0] [y] = square::kRight + square::kOutside;
+        maze_map_.array [maze_map_.width - 1] [y] = square::kLeft + square::kOutside;
+      }
+      maze_map_.array [0] [0] = square::kEmpty + square::kOutside;
+      maze_map_.array [maze_map_.width - 1] [0] = square::kEmpty + square::kOutside;
+      maze_map_.array [0] [maze_map_.height - 1] = square::kEmpty + square::kOutside;
+      maze_map_.array [maze_map_.width - 1] [maze_map_.height - 1] = square::kEmpty + square::kOutside;
     }
-    for (int y = 1; y < maze_map_.height - 1; ++ y) {
-      maze_map_.array [0] [y] = square::kRight + square::kOutside;
-      maze_map_.array [maze_map_.width - 1] [y] = square::kLeft + square::kOutside;
-    }
-    maze_map_.array [0] [0] = square::kEmpty + square::kOutside;
-    maze_map_.array [maze_map_.width - 1] [0] = square::kEmpty + square::kOutside;
-    maze_map_.array [0] [maze_map_.height - 1] = square::kEmpty + square::kOutside;
-    maze_map_.array [maze_map_.width - 1] [maze_map_.height - 1] = square::kEmpty + square::kOutside;
-    generate ();
+    generate (start);
   } while (setEnd () < (maze_map_.width + maze_map_.height) * 3 - 30);
 }
 
@@ -37,6 +39,12 @@ void HuntAndKill::generate () {
   do
     start = Point {rand () % maze_map_.width, rand () % maze_map_.height};
   while ((maze_map_.array [start.x] [start.y] & square::kOutside) == square::kOutside);
+  do
+    createPath (start);
+  while (huntPoint (start));
+}
+
+void HuntAndKill::generate (Point start) {
   do
     createPath (start);
   while (huntPoint (start));

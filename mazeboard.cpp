@@ -1,21 +1,19 @@
 #include "mazeboard.h"
 
-MazeBoard::MazeBoard (QWidget *parent) : QFrame (parent) {
-  game_ = new GameMechanics (20, Size {7, 7}, 1); // ma pobierać z widgetów
+MazeBoard::MazeBoard (int vision_width, int vision_height, QWidget *parent) : QWidget (parent) {
+  game_ = new GameMechanics (20, Size {4, 4}, 1); // ma pobierać z widgetów
   maze_square_ = new QPixmap [16];
   start_icon_ = new QPixmap;
   end_icon_ = new QPixmap;
   background_ = new QPixmap [4];
   player_icon_ = new QPixmap;
+  vision_width_ = vision_width;
+  vision_height_ = vision_height;
   reloadTextures ();
   redrawMaze ();
-  //  timer = new QTimer (this);
-  //  connect (timer, SIGNAL (timeout()), this, SLOT(tick ()));
-  //  timer->start (100);
-}
-
-void MazeBoard::tick () {
-
+  //  timer_ = new QTimer (this);
+  //  connect (timer_, SIGNAL (timeout ()), this, SLOT(tick ()));
+  //  timer_->start (100);
 }
 
 MazeBoard::~MazeBoard () {
@@ -33,8 +31,8 @@ MazeBoard::~MazeBoard () {
     delete [] background_;
   if (player_icon_ != nullptr)
     delete player_icon_;
-  if (timer != nullptr)
-    delete timer;
+  if (timer_ != nullptr)
+    delete timer_;
 }
 
 void MazeBoard::newGame (int num_levels) {
@@ -105,10 +103,12 @@ void MazeBoard::handleKeyEvent (QKeyEvent *event) {
         game_->jumpToEnd ();
         break;
       case Qt::Key_Period:
-        ++ fov_size_;
+        vision_width_ += 19;
+        vision_height_ += 11;
         break;
       case Qt::Key_Comma:
-        -- fov_size_;
+        vision_width_ -= 19;
+        vision_height_ -= 11;
         break;
       case Qt::Key_G:
         newGame (20);
@@ -118,24 +118,27 @@ void MazeBoard::handleKeyEvent (QKeyEvent *event) {
   update ();
 }
 
-void MazeBoard::paintEvent (QPaintEvent *event) {
-  QFrame::paintEvent (event);
-  QRect paint_target (this->lineWidth (), this->lineWidth (),
-                      this->width () - this->lineWidth () * 2,
-                      this->height () - this->lineWidth () * 2);
+void MazeBoard::paintEvent (QPaintEvent *) {
+//  QFrame::paintEvent (event);
+//  QRect paint_target (this->lineWidth (), this->lineWidth (),
+//                      this->width () - this->lineWidth () * 2,
+//                      this->height () - this->lineWidth () * 2);
+  QRect paint_target (0, 0, this->width (), this->height ());
+  QRect paint_source ((playerPositionX () + 0.5) * textures_res_ - vision_width_ / 2,
+                      (playerPositionY () + 0.5) * textures_res_ - vision_height_ / 2,
+                      vision_width_, vision_height_);
   QPainter *painter = new QPainter (this);
   if (is_antialiasing_)
     painter->setRenderHint (QPainter::SmoothPixmapTransform);
-  painter->drawPixmap (paint_target, *whole_maze_,
-                       QRect ((playerPositionX () - fov_size_ / 2) * textures_res_,
-                              (playerPositionY () - fov_size_ / 2) * textures_res_,
-                              fov_size_ * textures_res_, fov_size_ * textures_res_));
-  painter->drawPixmap (paint_target, QPixmap ("mazes/shadow.png"));
+  painter->drawPixmap (paint_target, *whole_maze_, paint_source);
+  painter->drawPixmap ((this->width () - 192) / 2, (this->height () - 192) / 2,
+                       *player_icon_);
+//  painter->drawPixmap (paint_target, QPixmap ("mazes/shadow.png"));
 
   delete painter;
 }
 
-void MazeBoard::redrawMaze () { // dodać jakiś panel ładowania, czy coś
+void MazeBoard::redrawMaze () {
   if (whole_maze_ != nullptr)
     delete whole_maze_;
   whole_maze_ = new QPixmap (game_->mazeWidth () * textures_res_, game_->mazeHeight () * textures_res_);
@@ -161,7 +164,7 @@ void MazeBoard::redrawMaze () { // dodać jakiś panel ładowania, czy coś
 void MazeBoard::reloadTextures () {
   int textures_res = textures_res_ * 1.5;
   player_icon_->load (":/player_characters/Mummy.png");
-  QPixmap maze_textures ("mazes/bricksHDdesert.png");
+  QPixmap maze_textures (":/mazes/bricksHDdesert.png");
   for (int i = 0, q = 0; i < 16; ++ q)
     for (int p = 0; p < 5 && i < 16; ++ p, ++ i)
       maze_square_ [i] = maze_textures.copy (textures_res * p, textures_res * q,
@@ -173,4 +176,13 @@ void MazeBoard::reloadTextures () {
                                      textures_res, textures_res);
   *end_icon_ = maze_textures.copy (textures_res * 5, textures_res,
                                    textures_res, textures_res);
+}
+
+void MazeBoard::setVisionWidth (int vision_width) {
+  vision_width_ = vision_width;
+}
+
+
+void MazeBoard::setVisionHeight (int vision_height) {
+  vision_height_ = vision_height;
 }
