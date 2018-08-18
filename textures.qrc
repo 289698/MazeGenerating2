@@ -1,11 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>player_characters/tomato.png</file>
-        <file>player_characters/tomatoHD.png</file>
         <file>player_characters/Mummy.png</file>
-        <file>mazes/shadow_temp.png</file>
-        <file>hud/level.png</file>
-        <file>mazes/bricksHD.png</file>
-        <file>mazes/bricksHDdesert.png</file>
+        <file>textures/blocks.png</file>
     </qresource>
 </RCC>

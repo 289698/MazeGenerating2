@@ -13,20 +13,19 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mazewindow.cpp \
-    huntandkill.cpp \
-    mazemap.cpp \
-    mazeboard.cpp \
-    gamemechanics.cpp \
-    levelbar.cpp
+    hunt-and-kill.cpp \
+    game-mechanics.cpp \
+    maze.cpp \
+    game-map.cpp \
+    game-window.cpp
 
-HEADERS  += mazewindow.h \
-    huntandkill.h \
-    mazemap.h \
-    mazeboard.h \
-    gamemechanics.h \
-    levelbar.h
+HEADERS  += maze-window.h \
+    hunt-and-kill.h \
+    game-mechanics.h \
+    maze.h \
+    game-map.h
 
 RESOURCES += textures.qrc
 
-DISTFILES +=
+DISTFILES += \
+    draft.h
