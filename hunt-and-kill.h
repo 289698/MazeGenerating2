@@ -6,6 +6,7 @@
 #include "maze.h"
 
 class HuntAndKill : public Maze {
+
 public:
   HuntAndKill (int width, int height);
   HuntAndKill (int width, int height, Point start, bool maze_border_flag = 0);

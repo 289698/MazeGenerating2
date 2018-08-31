@@ -17,15 +17,31 @@ SOURCES += main.cpp\
     game-mechanics.cpp \
     maze.cpp \
     game-map.cpp \
-    game-window.cpp
+    launcher-widget.cpp \
+    game-widget.cpp \
+    creator-window.cpp \
+    textures.cpp \
+    creator-widget.cpp \
+    creator-mechanics.cpp \
+    tool-widget.cpp
 
-HEADERS  += maze-window.h \
+HEADERS  += \
     hunt-and-kill.h \
     game-mechanics.h \
     maze.h \
-    game-map.h
+    game-map.h \
+    launcher-widget.h \
+    game-widget.h \
+    creator-window.h \
+    textures.h \
+    map-field.h \
+    creator-widget.h \
+    tool-widget.h \
+    creator-mechanics.h
 
 RESOURCES += textures.qrc
 
 DISTFILES += \
     draft.h
+
+FORMS +=

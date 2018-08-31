@@ -1,11 +1,11 @@
-#include "maze-window.h"
+#include "launcher-widget.h"
 #include <QApplication>
 
 int main (int argc, char *argv[]) {
 
   srand (time (0));
   QApplication a (argc, argv);
-  MazeWindow w;
+  LauncherWidget w;
   w.show ();
 
   return a.exec ();

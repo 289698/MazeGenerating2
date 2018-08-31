@@ -1,26 +1,29 @@
 #ifndef GAMEMECHANICS_H
 #define GAMEMECHANICS_H
 
-//#include <QObject>
 #include "game-map.h"
 
-class GameMechanics/* : public QObject*/ {
-//  Q_OBJECT
+class GameMechanics {
 
 public:
-  /*explicit */GameMechanics (/*QObject *parent = 0*/);
+  GameMechanics (int height, int width, const QString &name);
   ~GameMechanics ();
   inline int mapWidth () { return game_map_->width (); } // sprawdzanie null, czy uznać, że zawsze będzie?
   inline int mapHeight () { return game_map_->height (); }
-  inline int mapNumLayers () { return game_map_->numLayers (); }
-  bool printFlagBrick (int x, int y, int layer);
-  int blockIndex (int x, int y, int layer);
-  int colorIndex (int x, int y, int layer);
+  bool groundPrintFlag (int x, int y) { return game_map_->groundPrintFlag (x, y); }
+  bool blockPrintFlag (int x, int y) { return game_map_->blockPrintFlag (x, y); }
+  bool extraPrintFlag (int x, int y) { return game_map_->extraPrintFlag (x, y); }
+  mapField::color::color backColor (int x, int y) { return game_map_->backColor (x, y); }
+  mapField::color::color groundColor (int x, int y) { return game_map_->groundColor (x, y); }
+  mapField::color::color blockColor (int x, int y) { return game_map_->blockColor (x, y); }
+  mapField::ground::ground ground (int x, int y) { return game_map_->ground (x, y); }
+  mapField::block::block block (int x, int y) { return game_map_->block (x, y); }
+  mapField::extra::extra extra (int x, int y) { return game_map_->extra (x, y); }
 
 private:
   GameMap *game_map_ = nullptr;
-  /*! przerysowuje zadany labirynt na zadaną mapę gry, zanczynając od offset_x, offset_y
-   * zmienia tylko gameField::brick::Pattern, ::Colour zostawia niezmieniony */
+//  int num_levels_;
+
 };
 
 #endif // GAMEMECHANICS_H

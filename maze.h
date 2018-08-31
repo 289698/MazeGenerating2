@@ -1,5 +1,5 @@
-#ifndef MAZEMAP_H
-#define MAZEMAP_H
+#ifndef MAZE_H
+#define MAZE_H
 
 #include <iostream>
 #include <QDebug>
@@ -67,8 +67,8 @@ struct IntArray {
 };
 
 class Maze {
-public:
 
+public:
   virtual ~Maze ();
   inline int distanceFromPlayer (int x, int y) const
   { return distance_from_player_.array [x] [y]; }
@@ -101,4 +101,4 @@ private:
 
 };
 
-#endif // MAZEMAP_H
+#endif // MAZE_H
