@@ -1,62 +1,48 @@
 #include "textures.h"
 
 Textures::Textures () {
-  //! rezerwowanie miejsca na tekstury
-  ground_textures_ = new QPixmap *[mapField::ground::NumVariations];
-  for (int i = 0; i < mapField::ground::NumVariations; ++ i)
-    ground_textures_ [i] = new QPixmap [mapField::color::NumVariations];
-  block_textures_ = new QPixmap *[mapField::block::NumVariations];
-  for (int i = 0; i < mapField::block::NumVariations; ++ i)
-    block_textures_ [i] = new QPixmap [mapField::color::NumVariations];
-  extra_textures_ = new QPixmap [mapField::extra::NumVariations];
-
-  //! tymczasowe obiekty QPixmap do wczytania z plików
-  QPixmap *ground_full = new QPixmap (":/textures/grounds.png");
-  for (int y = 0; y < mapField::color::NumVariations; ++ y)
-    for (int x = 0; x < mapField::ground::NumVariations; ++ x)
-      ground_textures_ [x] [y] = ground_full->copy (x * Resolution, y * Resolution,
-                                                    Resolution, Resolution);
-  delete ground_full;
-  QPixmap *block_full = new QPixmap (":/textures/blocks.png");
-  for (int y = 0; y < mapField::color::NumVariations; ++ y)
-    for (int x = 0; x < mapField::block::NumVariations; ++ x)
-      block_textures_ [x] [y] = block_full->copy (x * Resolution, y * Resolution,
-                                                  Resolution, Resolution);
-  delete block_full;
-  QPixmap *extra_full = new QPixmap (":/textures/extras.png");
-  for (int i = 0; i < mapField::extra::NumVariations; ++ i)
-    extra_textures_ [i] = extra_full->copy (i * Resolution, 0,
-                                            Resolution, Resolution);
-  delete extra_full;
+  square_tiles_ = new QPixmap *[2];
+  square_tiles_ [0] = loadSquareTiles (":/textures/Dungeon/Floor.png");
+  square_tiles_ [1] = loadSquareTiles (":/textures/Dungeon/Celling.png");
 }
 
 Textures::~Textures () {
-  if (ground_textures_ != nullptr) {
-    for (int i = 0; i < mapField::ground::NumVariations; ++ i)
-      delete [] ground_textures_ [i];
-    delete [] ground_textures_;
-  }
-  if (block_textures_ != nullptr) {
-    for (int i = 0; i < mapField::block::NumVariations; ++ i)
-      delete [] block_textures_ [i];
-    delete [] block_textures_;
-  }
-  if (extra_textures_ != nullptr)
-    delete [] extra_textures_;
+  for (int i = 0; i < 2; ++ i)
+    delete [] square_tiles_ [i];
+  delete [] square_tiles_;
 }
 
-QPixmap Textures::backTexture (mapField::color::color color) {
-  return ground_textures_ [0] [color];
+QPixmap Textures::squareTileTex (Textures::tile type, Textures::squareTile index) {
+  return square_tiles_ [static_cast <int> (type)] [static_cast <int> (index)];
 }
 
-QPixmap Textures::groundTexture (mapField::ground::ground ground, mapField::color::color color) {
-  return ground_textures_ [ground] [color];
-}
+QPixmap *Textures::loadSquareTiles(const QString &path) {
+  QPixmap *tiles = new QPixmap [17];
+  QPixmap *texturesAtlas = new QPixmap (path);
 
-QPixmap Textures::blockTexture (mapField::block::block block, mapField::color::color color) {
-  return block_textures_ [block] [color];
-}
+  tiles [0] = texturesAtlas->copy (HalfRes * 5, HalfRes * 0, HalfRes, HalfRes);
+  tiles [1] = texturesAtlas->copy (HalfRes * 6, HalfRes * 0, HalfRes, HalfRes);
+  tiles [2] = texturesAtlas->copy (HalfRes * 2, HalfRes * 1, HalfRes, HalfRes);
+  tiles [3] = texturesAtlas->copy (HalfRes * 1, HalfRes * 1, HalfRes, HalfRes);
 
-QPixmap Textures::extraTexture (mapField::extra::extra extra) {
-  return extra_textures_ [extra];
+  tiles [4] = texturesAtlas->copy (HalfRes * 1, HalfRes * 0, HalfRes, HalfRes);
+  tiles [5] = texturesAtlas->copy (HalfRes * 2, HalfRes * 0, HalfRes, HalfRes);
+  tiles [6] = texturesAtlas->copy (HalfRes * 6, HalfRes * 1, HalfRes, HalfRes);
+  tiles [7] = texturesAtlas->copy (HalfRes * 5, HalfRes * 1, HalfRes, HalfRes);
+
+  tiles [8] = texturesAtlas->copy (HalfRes * 7, HalfRes * 0, HalfRes, HalfRes);
+  tiles [9] = texturesAtlas->copy (HalfRes * 4, HalfRes * 0, HalfRes, HalfRes);
+  tiles [10] = texturesAtlas->copy (HalfRes * 0, HalfRes * 1, HalfRes, HalfRes);
+  tiles [11] = texturesAtlas->copy (HalfRes * 3, HalfRes * 1, HalfRes, HalfRes);
+
+  tiles [12] = texturesAtlas->copy (HalfRes * 3, HalfRes * 0, HalfRes, HalfRes);
+  tiles [13] = texturesAtlas->copy (HalfRes * 0, HalfRes * 0, HalfRes, HalfRes);
+  tiles [14] = texturesAtlas->copy (HalfRes * 4, HalfRes * 1, HalfRes, HalfRes);
+  tiles [15] = texturesAtlas->copy (HalfRes * 7, HalfRes * 1, HalfRes, HalfRes);
+
+  tiles [16] = texturesAtlas->copy (FullRes * 4, 0, FullRes, FullRes);
+
+  delete texturesAtlas;
+
+  return tiles;
 }

@@ -1,188 +1,164 @@
 #include "game-map.h"
 
-using namespace mapField;
-
-GameMap::GameMap (int width, int height, const QString &name) :
-  width_ (width), height_ (height), name_ (name) {
+GameMap::GameMap (Textures *textures, int width, int height) :
+  textures_ (textures), width_ (width), height_ (height) {
   map_ = new GameField *[width_];
+
+
   for (int x = 0; x < width_; ++ x) {
     map_ [x] = new GameField [height_];
     for (int y = 0; y < height_; ++ y)
-      map_ [x] [y] = GameField {logic::None, color::Stone, color::Dirt, color::Grass,
-                     ground::Plain, block::Quoin1, extra::Bush};
+      map_ [x] [y].tile = GameMap::tile::Wall;
   }
-//  for (int x = 0; x < 30; ++ x)
-//    for (int y = 0; y < 30; ++ y)
-//      this->setGroundPrintFlag (true, x, y);
-//  for (int x = 20; x < 50; ++ x)
-//    for (int y = 0; y < 30; ++ y)
-//      this->setBlockPrintFlag (true, x, y);
-//  for (int x = 10; x < 40; ++ x)
-//    for (int y = 10; y < 40; ++ y)
-//      this->setExtraPrintFlag (true, x, y);
-//  generateMaze (10, 10, true, 0, 0, 1);
+  for (int x = 1; x < width_ - 1; ++ x) {
+    for (int y = 1; y < height_ - 1; ++ y)
+      map_ [x] [y].tile = GameMap::tile::Floor;
+  }
+
+  drawBackground ();
+  drawWalls ();
 }
 
 GameMap::~GameMap () {
   for (int x = 0; x < width_; ++ x)
     delete [] map_ [x];
   delete [] map_;
+  if (background_ != nullptr)
+    delete background_;
 }
 
-bool GameMap::groundPrintFlag (int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 1";
-    return false;
+void GameMap::drawAdhereTile (QPainter *painter, Textures::tile type, int x, int y,
+                              int drawing_x, int drawing_y) {
+  painter->drawPixmap (drawing_x, drawing_y,
+                       textures_->squareTileTex (type, Textures::squareTile::Tile));
+
+  int adjacent_tiles = 0;
+  if (y > 0 && map_ [x] [y - 1].tile != map_ [x] [y].tile)
+    adjacent_tiles += 0b0001;
+  if (x > 0 && map_ [x - 1] [y].tile != map_ [x] [y].tile)
+    adjacent_tiles += 0b0010;
+  if (y < (height_ - 1) && map_ [x] [y + 1].tile != map_ [x] [y].tile)
+    adjacent_tiles += 0b0100;
+  if (x < (width_ -1) && map_ [x + 1] [y].tile != map_ [x] [y].tile)
+    adjacent_tiles += 0b1000;
+
+  switch (adjacent_tiles & 0b1001) {
+  case 0b0000:
+    if (x < (width_ - 1) && y > 0 && map_ [x + 1] [y - 1].tile != map_ [x] [y].tile)
+      painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y,
+                           textures_->squareTileTex (type, Textures::squareTile::Quoin1));
+    break;
+  case 0b0001:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::BarH1));
+    break;
+  case 0b1000:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::BarV1));
+    break;
+  case 0b1001:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::Corner1));
+    break;
   }
-  return ((map_ [x] [y].logic & logic::GroundPrintFlag) == logic::GroundPrintFlag);
+  switch (adjacent_tiles & 0b0011) {
+  case 0b0000:
+    if (x > 0 && y > 0 && map_ [x - 1] [y - 1].tile != map_ [x] [y].tile)
+      painter->drawPixmap (drawing_x, drawing_y,
+                           textures_->squareTileTex (type, Textures::squareTile::Quoin2));
+    break;
+  case 0b0001:
+    painter->drawPixmap (drawing_x, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::BarH2));
+    break;
+  case 0b0010:
+    painter->drawPixmap (drawing_x, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::BarV2));
+    break;
+  case 0b0011:
+    painter->drawPixmap (drawing_x, drawing_y,
+                         textures_->squareTileTex (type, Textures::squareTile::Corner2));
+    break;
+  }
+  switch (adjacent_tiles & 0b0110) {
+  case 0b0000:
+    if (x > 0 && y < (height_ - 1) && map_ [x - 1] [y + 1].tile != map_ [x] [y].tile)
+      painter->drawPixmap (drawing_x, drawing_y + Textures::HalfRes,
+                           textures_->squareTileTex (type, Textures::squareTile::Quoin3));
+    break;
+  case 0b0100:
+    painter->drawPixmap (drawing_x, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::BarH3));
+    break;
+  case 0b0010:
+    painter->drawPixmap (drawing_x, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::BarV3));
+    break;
+  case 0b0110:
+    painter->drawPixmap (drawing_x, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::Corner3));
+    break;
+  }
+  switch (adjacent_tiles & 0b1100) {
+  case 0b0000:
+    if (x < (width_ - 1) && y < (height_ - 1) && map_ [x + 1] [y + 1].tile != map_ [x] [y].tile)
+      painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y + Textures::HalfRes,
+                           textures_->squareTileTex (type, Textures::squareTile::Quoin4));
+    break;
+  case 0b0100:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::BarH4));
+    break;
+  case 0b1000:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::BarV4));
+    break;
+  case 0b1100:
+    painter->drawPixmap (drawing_x + Textures::HalfRes, drawing_y + Textures::HalfRes,
+                         textures_->squareTileTex (type, Textures::squareTile::Corner4));
+    break;
+  }
 }
 
-bool GameMap::blockPrintFlag (int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 2";
-    return false;
-  }
-  return ((map_ [x] [y].logic & logic::BlockPrintFlag) == logic::BlockPrintFlag);
+void GameMap::drawBackground () {
+  if (background_ != nullptr)
+    delete background_;
+  background_ = new QPixmap (width_ * Textures::FullRes, height_ * Textures::FullRes);
+  QPainter *painter = new QPainter (background_);
+  for (int x = 0; x < width_; ++ x)
+    for (int y = 0; y < height_; ++ y) {
+      Textures::tile type;
+      switch (map_ [x] [y].tile) {
+      case GameMap::tile::Floor:
+        type = Textures::tile::Floor;
+        break;
+      case GameMap::tile::Wall:
+        type = Textures::tile::Celling;
+        break;
+      default:
+        continue;
+      }
+      drawAdhereTile (painter, type, x, y,
+                      x * Textures::FullRes, y * Textures::FullRes);
+    }
+  delete painter;
 }
 
-bool GameMap::extraPrintFlag (int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 3";
-    return false;
-  }
-  return ((map_ [x] [y].logic & logic::ExtraPrintFlag) == logic::ExtraPrintFlag);
-}
-
-color::color GameMap::backColor(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 4";
-    return color::color::Dirt; // poprawić na shadow
-  }
-  return map_ [x] [y].back_color;
-}
-
-color::color GameMap::groundColor(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 5";
-    return color::color::Dirt; // poprawić na shadow
-  }
-  return map_ [x] [y].ground_color;
-}
-
-color::color GameMap::blockColor(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 6";
-    return color::color::Dirt; // poprawić na shadow
-  }
-  return map_ [x] [y].block_color;
-}
-
-ground::ground GameMap::ground(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 7";
-    return ground::ground::Plain; // no co zrobisz
-  }
-  return map_ [x] [y].ground;
-}
-
-block::block GameMap::block(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 8";
-    return block::block::Quoin1;
-  }
-  return map_ [x] [y].block;
-}
-
-extra::extra GameMap::extra(int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 9";
-    return extra::extra::Rock1;
-  }
-  return map_ [x] [y].extra;
-}
-
-bool GameMap::setGroundPrintFlag (bool value, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 10";
-    return false;
-  }
-  map_ [x] [y].logic &= (~logic::GroundPrintFlag);
-  map_ [x] [y].logic |= (logic::GroundPrintFlag * value);
-  return true;
-}
-
-bool GameMap::setBlockPrintFlag (bool value, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 11";
-    return false;
-  }
-  map_ [x] [y].logic &= (~logic::BlockPrintFlag);
-  map_ [x] [y].logic |= (logic::BlockPrintFlag * value);
-  return true;
-}
-
-bool GameMap::setExtraPrintFlag (bool value, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 12";
-    return false;
-  }
-  map_ [x] [y].logic &= (~logic::ExtraPrintFlag);
-  map_ [x] [y].logic |= (logic::ExtraPrintFlag * value);
-  return true;
-}
-
-bool GameMap::setBackColor (color::color color, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 13";
-    return false;
-  }
-  map_ [x] [y].back_color = color;
-  return true;
-}
-
-bool GameMap::setGroundColor (color::color color, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 14";
-    return false;
-  }
-  map_ [x] [y].ground_color = color;
-  return true;
-}
-
-bool GameMap::setBlockColor (color::color color, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 15";
-    return false;
-  }
-  map_ [x] [y].block_color = color;
-  return true;
-}
-
-bool GameMap::setGround (ground::ground ground, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 16";
-    return false;
-  }
-  map_ [x] [y].ground = ground;
-  return true;
-}
-
-bool GameMap::setBlock (block::block block, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 17";
-    return false;
-  }
-  map_ [x] [y].block = block;
-  return true;
-}
-
-bool GameMap::setExtra (extra::extra extra, int x, int y) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    qDebug () << "error GameMap 18";
-    return false;
-  }
-  map_ [x] [y].extra = extra;
-  return true;
+void GameMap::drawWalls () {
+  if (walls_ != nullptr)
+    delete walls_;
+  walls_ = new QPixmap (width_ * Textures::FullRes, height_ * Textures::FullRes);
+  walls_->fill (Qt::transparent);
+  QPainter *painter = new QPainter (walls_);
+  for (int x = 0; x < width_; ++ x)
+    for (int y = 0; y < height_; ++ y)
+      if (map_ [x] [y].tile == GameMap::tile::Wall) {
+        drawAdhereTile (painter, Textures::tile::Celling, x, y,
+                        x * Textures::FullRes, (y - 2) * Textures::FullRes);
+        painter->drawPixmap (x * Textures::FullRes, (y -1) * Textures::FullRes,
+                             QPixmap (":/textures/Dungeon/WallPlaceholder.png"));
+      }
+  delete painter;
 }
 
 //void GameMap::generateMaze (int maze_width, int maze_height, bool maze_border_flag,

@@ -6,7 +6,6 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include "game-widget.h"
-#include "creator-window.h"
 
 class LauncherWidget : public QWidget {
   Q_OBJECT
@@ -21,11 +20,9 @@ protected:
 private:
   Textures *textures_ = nullptr;
   GameWidget *game_widget_ = nullptr;
-  CreatorWindow *creator_window_ = nullptr;
 
 private slots:
   void newGame ();
-  void newCreator ();
   void QWidgetClosed ();
 
 };

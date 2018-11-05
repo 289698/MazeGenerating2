@@ -4,8 +4,8 @@
 #include <QDialog>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QCloseEvent>
-#include "textures.h"
 #include "game-mechanics.h"
 
 class GameWidget : public QWidget {
@@ -24,21 +24,13 @@ signals:
 protected:
   void paintEvent (QPaintEvent *event);
   void keyPressEvent (QKeyEvent *event);
+  void mousePressEvent (QMouseEvent *event);
   void closeEvent (QCloseEvent *event);
 
 private:
-  void redrawBackLayer ();
-  void redrawGroundLayer ();
-  void redrawBlockLayer ();
-  void redrawExtraLayer ();
   Textures *const textures_;
   GameMechanics *game_ = nullptr;
-  QPixmap *back_layer_ = nullptr;
-  QPixmap *ground_layer_ = nullptr;
-  QPixmap *block_layer_ = nullptr;
-  QPixmap *extra_layer_ = nullptr;
-
-  bool grid_flag = false, text_flag_ = false;
+  bool grid_flag_ = false, back_flag_ = true, walls_flag_ = true;
 };
 
 #endif // GAMEWIDGET_H

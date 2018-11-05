@@ -2,23 +2,22 @@
 #define TEXTURES_H
 
 #include <QPixmap>
-#include "map-field.h"
 
 class Textures {
 
 public:
-  enum { Resolution = 16 };
+  enum { FullRes = 64, HalfRes = FullRes / 2 };
+  enum class theme { Dungeon };
+  enum class tile { Floor, Celling };
+  enum class squareTile { Quoin1, Quoin2, Quoin3, Quoin4, BarH1, BarH2, BarH3, BarH4,
+                          BarV1, BarV2, BarV3, BarV4, Corner1, Corner2, Corner3, Corner4, Tile };
   Textures ();
   ~Textures ();
-  QPixmap backTexture (mapField::color::color color);
-  QPixmap groundTexture (mapField::ground::ground ground, mapField::color::color color);
-  QPixmap blockTexture (mapField::block::block block, mapField::color::color color);
-  QPixmap extraTexture (mapField::extra::extra extra);
+  QPixmap squareTileTex (tile type, squareTile index);
 
 private:
-  QPixmap **ground_textures_ = nullptr;
-  QPixmap **block_textures_ = nullptr;
-  QPixmap *extra_textures_ = nullptr;
+  QPixmap *loadSquareTiles (const QString &path);
+  QPixmap **square_tiles_;
 
 };
 

@@ -19,11 +19,7 @@ SOURCES += main.cpp\
     game-map.cpp \
     launcher-widget.cpp \
     game-widget.cpp \
-    creator-window.cpp \
     textures.cpp \
-    creator-widget.cpp \
-    creator-mechanics.cpp \
-    tool-widget.cpp
 
 HEADERS  += \
     hunt-and-kill.h \
@@ -32,12 +28,7 @@ HEADERS  += \
     game-map.h \
     launcher-widget.h \
     game-widget.h \
-    creator-window.h \
-    textures.h \
-    map-field.h \
-    creator-widget.h \
-    tool-widget.h \
-    creator-mechanics.h
+    textures.h
 
 RESOURCES += textures.qrc
 

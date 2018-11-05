@@ -1,7 +1,7 @@
 #include "game-mechanics.h"
 
-GameMechanics::GameMechanics (int height, int width, const QString &name) {
-  game_map_ = new GameMap (height, width, name);
+GameMechanics::GameMechanics (Textures *textures, int width, int height) : textures_ (textures) {
+  game_map_ = new GameMap (textures_, width, height);
 }
 
 GameMechanics::~GameMechanics () {

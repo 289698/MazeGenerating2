@@ -1,19 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>player_characters/Mummy.png</file>
-        <file>textures/blocks.png</file>
-        <file>creator_icons/pencil.png</file>
-        <file>textures/extras.png</file>
-        <file>textures/grounds.png</file>
-        <file>creator_icons/drawer.png</file>
-        <file>creator_icons/eraser.png</file>
-        <file>creator_icons/painter.png</file>
-        <file>creator_icons/shaper.png</file>
-        <file>creator_icons/back-layer.png</file>
-        <file>creator_icons/block-layer.png</file>
-        <file>creator_icons/extra-layer.png</file>
-        <file>creator_icons/ground-layer.png</file>
-        <file>creator_icons/logic-layer.png</file>
-        <file>creator_icons/filler.png</file>
+        <file>textures/Dungeon/Floor.png</file>
+        <file>textures/Dungeon/SquarePlaceholderAtlas.png</file>
+        <file>textures/Dungeon/Celling.png</file>
+        <file>textures/Dungeon/WallPlaceholder.png</file>
     </qresource>
 </RCC>
